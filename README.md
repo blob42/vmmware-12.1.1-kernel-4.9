@@ -41,7 +41,7 @@ Commits responsible for this error:
 https://github.com/torvalds/linux/commit/9beae1ea89305a9667ceaab6d0bf46a045ad71e7
 https://github.com/torvalds/linux/commit/1e9877902dc7e11d2be038371c6fbf2dfcd469d7#diff-e37c5ffd9b4db050c3f7eae7d74e64c3R1230
 
-Ths signature of get_user_pages_remote changed, instead of passing (write=1,force=0) they are passed in a flag ( 0 |= [FOLL_WRITE](https://github.com/torvalds/linux/blob/6e5c8381d1db4c1cdd4b4e49d5f0d1255c2246fd/include/linux/mm.h#L2278)) 
+Ths signature of get_user_pages_remote changed, instead of passing (write=1,force=0) they are passed in a flag ( 0 |= [FOLL_WRITE or 0](https://github.com/torvalds/linux/blob/6e5c8381d1db4c1cdd4b4e49d5f0d1255c2246fd/include/linux/mm.h#L2278)) 
 
 
 
