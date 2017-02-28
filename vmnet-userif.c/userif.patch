@@ -1,0 +1,26 @@
+--- vmnet-only-bak/userif.c	2017-02-28 17:19:28.674984344 +0100
++++ vmnet-only/userif.c	2017-02-28 17:19:21.558424545 +0100
+@@ -112,9 +112,23 @@
+    struct page *page = NULL;
+    int retval;
+ 
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,9,0)
++   unsigned int flags = FOLL_WRITE; // Write only
++#endif
++
+    down_read(&current->mm->mmap_sem);
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,9,0)
++   retval = get_user_pages_remote(current, current->mm, addr,
++			   1, flags, &page, NULL);
++#else
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 6, 0)
+    retval = get_user_pages_remote(current, current->mm, addr,
+ 			   1, 1, 0, &page, NULL);
++#else
++   retval = get_user_pages(current, current->mm, addr,
++           1, 1, 0, &page, NULL);
++#endif
++#endif
+    up_read(&current->mm->mmap_sem);
+ 
+    if (retval != 1) {

@@ -1,0 +1,33 @@
+diff -Naur vmmon-only-bak/linux/hostif.c vmmon-only/linux/hostif.c
+--- vmmon-only-bak/linux/hostif.c	2017-02-28 17:05:34.764176166 +0100
++++ vmmon-only/linux/hostif.c	2017-02-28 17:07:07.966050524 +0100
+@@ -1160,10 +1160,29 @@
+                    unsigned int numPages) // IN
+ {
+    int retval;
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,9,0)
++   unsigned int flags = 0; // No rights
++#endif
+ 
+    down_read(&current->mm->mmap_sem);
++
++
++
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,9,0)
++   retval = get_user_pages_remote(current, current->mm, (unsigned long)uvAddr,
++                           numPages, flags, ppages, NULL);
++#else
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 6, 0)
+    retval = get_user_pages_remote(current, current->mm, (unsigned long)uvAddr,
+                            numPages, 0, 0, ppages, NULL);
++#else
++   retval = get_user_pages(current, current->mm, (unsigned long)uvAddr,
++                           numPages, 0, 0, ppages, NULL);
++#endif
++#endif
++
++
++
+    up_read(&current->mm->mmap_sem);
+ 
+    return retval != numPages;
